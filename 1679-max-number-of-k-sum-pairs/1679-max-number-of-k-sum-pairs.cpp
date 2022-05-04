@@ -8,22 +8,16 @@ public:
         int right = nums.size()-1;
         while(left<right){
             if(nums[left]+nums[right]==k){
-                // nums.erase(left);
-                // nums.erase(right);
                 count++;
                 left++;
                 right--;
                 continue;
-                // continue;
             }
             if(nums[left]+nums[right]>k){
                 right--;
                 continue;
             }
-            
-            if(nums[left]+nums[right]<k){
-                left++;
-            }
+            if(nums[left]+nums[right]<k)left++;
         }
         return count;
     }
