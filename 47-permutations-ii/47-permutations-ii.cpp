@@ -15,6 +15,7 @@ public:
         sort(num.begin(), num.end());
         vector<vector<int> >res;
         recursion(num, 0, num.size(), res);
-        return res;
+        return res;   
+        
     }
 };
