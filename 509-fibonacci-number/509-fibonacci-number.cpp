@@ -2,10 +2,7 @@ class Solution {
 public:
     int fib(int n) {
         if(n==0)return n;
-        vector<int>dp;
-        for(int i = 0 ;i<n+1;i++){
-            dp.push_back(-1);
-        }
+        vector<int>dp(n+1);
         dp[0]=0;
         dp[1]=1;
         for(int i = 2 ;i<=n;i++){
