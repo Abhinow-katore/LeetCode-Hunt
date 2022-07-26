@@ -1,19 +1,17 @@
-
 class Solution {
 public:
     int fib(int n) {
-        if(n<2) return n;                  // n से कम होने पर वापसी करें
-        int डीपी[n+1];
-        memset(डीपी,-1,sizeof(डीपी));
-        डीपी[0] =0;
-        डीपी[1] = 1;
-        for(int i =2; i<=n;i++){     
-            if(डीपी[i]!=-1){
-                continue;                   //यदि उत्तर पहले से संग्रहीत है तो उसे वापस लौटा दें
-            }
-            int उत्तर = डीपी[i-1] + डीपी[i-2]; //अपना उत्तर में सेव करें
-            डीपी[i] = उत्तर;
+        if(n==0)return n;
+        vector<int>dp;
+        for(int i = 0 ;i<n+1;i++){
+            dp.push_back(-1);
         }
-        return डीपी[n];
+        dp[0]=0;
+        dp[1]=1;
+        for(int i = 2 ;i<=n;i++){
+            dp[i] = dp[i-1]+dp[i-2];
+            // if()
+        }
+    return dp[n];
     }
 };
