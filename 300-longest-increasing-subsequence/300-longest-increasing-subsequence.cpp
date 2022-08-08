@@ -10,8 +10,6 @@ public:
                 
             }
         }
-        for(int i = 0; i<nums.size();i++){
-            cout<<dp[i]<<" ";}
         return *max_element(dp.begin(), dp.end());;
     }
 };
