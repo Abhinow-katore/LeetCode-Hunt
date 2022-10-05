@@ -1,0 +1,66 @@
+Problem : 
+
+You are given a 2D array of integers envelopes where envelopes[i] = [wi, hi] represents the width and the height of an envelope.
+
+One envelope can fit into another if and only if both the width and height of one envelope are greater than the other envelope's width and height.
+
+Return the maximum number of envelopes you can Russian doll (i.e., put one inside the other).
+
+Note: You cannot rotate an envelope.
+
+
+
+Solution in Java :
+
+
+public class Solution {
+    public int maxEnvelopes(int[][] envelopes) {        
+        Arrays.sort(envelopes, (a, b) -> a[0] == b[0] ? b[1] - a[1] : a[0] - b[0]);
+        
+        int[] dp = new int[envelopes.length];
+        int size = 0;
+        
+        for(int[] envelope: envelopes) {
+            int index = binarySearch(dp, envelope[1], size);
+            
+            dp[index] = envelope[1];
+            if(index == size) size++;
+        }
+        return size;
+    }
+    
+    private static int binarySearch(int[] dp, int height, int size) {
+        int low = 0, high = size;
+        while(low < high) {
+            int mid = (low + high) >> 1;
+            if (dp[mid] < height) {
+                low = mid + 1;
+            }else {
+                high = mid;
+            }
+        }
+        return low;
+    }
+}
+
+
+/*
+
+Explaination for similar problems.
+
+This problem is asking for LIS in two dimensions, width and height. 
+Sorting the width reduces the problem by one dimension. 
+If width is strictly increasing, the problem is equivalent to finding LIS in only the height dimension. 
+However, when there is a tie in width, a strictly increasing sequence in height may not be a correct solution. For example, [[3,3] cannot fit in [3,4]]. 
+Sorting height in descending order when there is a tie prevents such a sequence to be included in the solution.
+
+The same idea can be applied to problems of higher dimensions. 
+
+For example, box fitting is three dimensions, width, height, and length. 
+Sorting width ascending and height descending reduces the problem by one dimension. 
+Finding the LIS by height further reduces the problem by another dimension. 
+When find LIS based on only length, it becomes a standard LIS problem.
+
+
+
+*/
