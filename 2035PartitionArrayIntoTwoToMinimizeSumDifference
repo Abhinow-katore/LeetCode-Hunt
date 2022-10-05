@@ -1,0 +1,66 @@
+Problem : 
+
+You are given an integer array nums of 2 * n integers. You need to partition nums into two arrays of length n to minimize the absolute difference of the sums of the arrays. To partition nums, put each element of nums into one of the two arrays.
+
+Return the minimum possible absolute difference.
+
+
+
+Solution in Java.
+
+class Solution {
+    public int minimumDifference(int[] nums) {
+        int totalSum = 0;
+        for (int val : nums) {
+            totalSum += val;
+        }
+        
+        int n = nums.length >> 1;
+        
+        TreeSet<Integer>[] treeSet = new TreeSet[n + 1];
+        
+        for (int mask = 0; mask < (1 << n); mask++) {
+            int elements = Integer.bitCount(mask);
+            int leftSum = 0;
+            
+            for (int i = 0; i < n; i++) {
+                if ((mask & (1 << i)) >= 1) {
+                    leftSum += nums[i];
+                }
+            }
+            
+            if (treeSet[elements] == null) {
+                treeSet[elements] = new TreeSet<>();
+            }
+            treeSet[elements].add(leftSum);
+        }
+        
+        int minDifference = Integer.MAX_VALUE;
+        
+        for (int mask = 0; mask < (1 << n); mask++) {
+            int elements = Integer.bitCount(mask);
+            int rightSum = 0;
+            
+            for (int i = 0; i < n; i++) {
+                if ((mask & (1 << i)) >= 1) {
+                    rightSum += nums[i + n];
+                }
+            }
+            
+            int requiredSum = (totalSum - 2 * rightSum) >> 1;
+            
+            Integer low = treeSet[n - elements].floor(requiredSum);
+            Integer high = treeSet[n - elements].ceiling(requiredSum);
+            
+            if (low != null) {
+                minDifference = Math.min(minDifference, Math.abs(totalSum - 2 * (low.intValue() + rightSum)));
+            }
+            
+            if (high != null) {
+                minDifference = Math.min(minDifference, Math.abs(totalSum - 2 * (high.intValue() + rightSum)));
+            }
+        }
+        
+        return minDifference;
+    }
+}
