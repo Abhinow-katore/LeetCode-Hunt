@@ -1,0 +1,54 @@
+Problem : 
+
+You are given a tree with n nodes numbered from 0 to n - 1 in the form of a parent array parent where parent[i] is the parent of ith node. The root of the tree is node 0. Find the kth ancestor of a given node.
+
+The kth ancestor of a tree node is the kth node in the path from that node to the root node.
+
+Implement the TreeAncestor class:
+
+TreeAncestor(int n, int[] parent) Initializes the object with the number of nodes in the tree and the parent array.
+int getKthAncestor(int node, int k) return the kth ancestor of the given node node. If there is no such ancestor, return -1.
+ 
+
+Solution in Java : 
+
+
+class TreeAncestor {
+    int[][] ancestor; // stores the 2^j th ancestor of node i.
+    int[] depth;
+    int log;
+    public TreeAncestor(int n, int[] parent) {
+        log = (int) Math.ceil(Math.log(n) / Math.log(2)) + 1;
+        depth = new int[n + 1];
+        ancestor = new int[n + 1][log];
+        // since root is 0th node, it has no parent.
+        parent[0] = 0;
+        for (int v = 0; v < n; v++) {
+            ancestor[v][0] = parent[v];
+            if(v != 0) {
+                depth[v] = depth[parent[v]] + 1;
+            }
+            for (int j = 1; j < log; j++) {
+                ancestor[v][j] = ancestor[ancestor[v][j - 1]][j - 1];
+            }
+        }
+    }
+    
+    public int getKthAncestor(int node, int k) {
+        if(depth[node] < k) { // kth ancestor doesn't exist.
+            return -1;
+        }
+        for(int j = 0; j < log; j++) {
+            if((k & (1 << j)) >= 1) {
+                node = ancestor[node][j];
+            }
+        }
+        return node;
+    }
+}
+
+/**
+ * Your TreeAncestor object will be instantiated and called as such:
+ * TreeAncestor obj = new TreeAncestor(n, parent);
+ * int param_1 = obj.getKthAncestor(node,k);
+ */
