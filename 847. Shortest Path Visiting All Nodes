@@ -1,0 +1,79 @@
+Problem : 
+
+You have an undirected, connected graph of n nodes labeled from 0 to n - 1. You are given an array graph where graph[i] is a list of all the nodes connected with node i by an edge.
+
+Return the length of the shortest path that visits every node. You may start and stop at any node, you may revisit nodes multiple times, and you may reuse edges.
+
+
+
+Solution in Java : 
+
+class Solution {
+    class Path {
+        int mask;
+        int currNode;
+        int cost;
+        
+        Path (int mask, int currNode, int cost) {
+            this.mask = mask;
+            this.currNode = currNode;
+            this.cost = cost;
+        }
+        
+        public boolean equals(Object o){
+            Path p = (Path) o;
+            return mask == p.mask && currNode == p.currNode && cost == p.cost;
+        }
+    
+        public int hashCode(){
+            return 1331 * mask + 7193 * currNode + 727 * cost;
+        }
+    }
+    
+    public int shortestPathLength(int[][] graph) {
+        int n = graph.length;
+        
+        Queue<Path> q = new LinkedList<>();
+        HashSet<Path> visitedPaths = new HashSet<>();
+        
+        for (int i = 0; i < n; i++) { // try all starting nodes of our path
+            visitedPaths.add(new Path((1 << i), i, 0));
+            q.add(new Path((1 << i), i, 0));
+        }
+        
+        while (!q.isEmpty()) {
+            int size = q.size();
+            for (int i = 0; i < size; i++) {
+                Path currPath = q.poll();
+                if (currPath.mask == (1 << n) - 1) {
+                    return currPath.cost;
+                }
+                
+                int[] adjacents = graph[currPath.currNode];
+                for (int adj : adjacents) {
+                    int mask = currPath.mask;
+                    mask = mask | (1 << adj);
+                    
+                    Path nextPath = new Path(mask, adj, 0);
+                    
+                    if (!visitedPaths.contains(nextPath)) {
+                        visitedPaths.add(nextPath);
+                        q.add(new Path(mask, adj, currPath.cost + 1));
+                    }
+                }
+            }
+        }
+        
+        return -1;
+    }
+}
+
+
+
+
+
+
+
+
+
+
