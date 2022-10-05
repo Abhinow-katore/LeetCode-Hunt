@@ -1,0 +1,93 @@
+Problem : 
+
+You are given a square board of characters. You can move on the board starting at the bottom right square marked with the character 'S'.
+
+You need to reach the top left square marked with the character 'E'. The rest of the squares are labeled either with a numeric character 1, 2, ..., 9 or with an obstacle 'X'. In one move you can go up, left or up-left (diagonally) only if there is no obstacle there.
+
+Return a list of two integers: the first integer is the maximum sum of numeric characters you can collect, and the second is the number of such paths that you can take to get that maximum sum, taken modulo 10^9 + 7.
+
+In case there is no path, return [0, 0].
+
+
+
+Solution in Java : 
+
+
+class Solution {
+
+    static int mod = 1000000007;
+    
+    public int[] pathsWithMaxScore(List<String> board) {
+        int n = board.size();
+        
+        int[][] score = new int[n][n];
+        int[][] paths = new int[n][n];
+        
+        for (int i = 0; i < n; i++) {
+            Arrays.fill(score[i], -1);
+        }
+        
+        findPathsWithMaxScore(score, paths, board, n);
+        
+        if (score[0][0] == -1) {
+            return new int[]{0, 0};
+        }
+        
+        return new int[]{score[0][0], paths[0][0]};
+    }
+    
+    static int[][] directions = new int[][]{{1, 0}, {0, 1}, {1, 1}};
+    
+    private static void findPathsWithMaxScore(int[][] score, int[][] paths, List<String> board, int n) {        
+        score[n - 1][n - 1] = 0;
+        paths[n - 1][n - 1] = 1;
+        
+        for (int j = n - 2; j >= 0; j--) {
+            char c = board.get(n - 1).charAt(j);
+            if (c == 'X') {
+                break;
+            }
+            score[n - 1][j] = (score[n - 1][j + 1] + (c - '0')) % mod;
+            paths[n - 1][j] = 1;
+        }
+        
+        for (int i = n - 2; i >= 0; i--) {
+            char c = board.get(i).charAt(n - 1);
+            if (c == 'X') {
+                break;
+            }
+            score[i][n - 1] = (score[i + 1][n - 1] + (c - '0')) % mod;
+            paths[i][n - 1] = 1;
+        }
+        
+        for (int i = n - 2; i >= 0; i--) {
+            for (int j = n - 2; j >= 0; j--) {
+                char c1 = board.get(i).charAt(j);
+                if (c1 == 'X') {
+                    continue;
+                }
+                for (int[] direction : directions) {
+                    int x = direction[0] + i;
+                    int y = direction[1] + j;
+                    
+                    char c2 = board.get(x).charAt(y);
+                    if (c2 != 'X' && score[x][y] >= 0) {
+                        int prevScore = (score[x][y] + (c1 == 'E' ? 0 : c1 - '0')) % mod;
+                        
+                        if (score[i][j] < prevScore) {
+                            score[i][j] = prevScore;
+                            paths[i][j] = paths[x][y];
+                        }else if (score[i][j] == prevScore) {
+                            paths[i][j] += paths[x][y];
+                            paths[i][j] %= mod;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+
+
+
