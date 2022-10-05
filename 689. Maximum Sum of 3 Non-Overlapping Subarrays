@@ -1,0 +1,64 @@
+Problem : 
+
+Given an integer array nums and an integer k, find three non-overlapping subarrays of length k with maximum sum and return them.
+
+Return the result as a list of indices representing the starting position of each interval (0-indexed). If there are multiple answers, return the lexicographically smallest one.
+
+
+Solution in Java : 
+
+
+class Solution {
+    public int[] maxSumOfThreeSubarrays(int[] nums, int k) {
+        if(nums==null || nums.length==0) {
+            return null;
+        }
+        
+        int len = nums.length;
+       
+        int[] sum = new int[len+1];
+        int[] left = new int[len];
+        int[] right = new int[len];
+        int[] res = new int[3];
+        int max = 0;
+        
+        for(int i = 0 ; i < len; i++){
+            sum[i+1] = sum[i] + nums[i];
+        }
+        int leftMax = sum[k]-sum[0];
+        left[k-1] = 0;
+        for (int i=k; i<len; i++) {
+            if (sum[i+1] - sum[i+1-k] > leftMax) {
+                left[i] = i-k+1;
+                leftMax = sum[i+1] - sum[i+1-k];
+            } else {
+                left[i] = left[i-1];
+            }
+        }
+        int rightMax = sum[len] - sum[len-k];
+        right[len-k] = len-k;
+        for (int i=len-k-1; i>=0; i--) {
+            if (sum[i+k] - sum[i] >= rightMax) {
+                right[i] = i;
+                rightMax = sum[i+k] - sum[i];
+            } else {
+                right[i] = right[i+1];
+            }
+        }
+        for(int i = k ; i <= len-2*k ; i++ ){
+            int L = left[i-1];
+            int R = right[i+k];
+            int total = (sum[L+k]- sum[L]) + (sum[R+k] - sum[R]) + (sum[i+k] - sum[i]); 
+            if(total > max){
+                max = total;
+                res[0] = L;
+                res[1] = i;
+                res[2] = R;
+            }
+        }
+        return res;
+    }
+}
+
+
+
